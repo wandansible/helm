@@ -1,15 +1,37 @@
 ---
+- name: Remove old helm apt repository entry
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [signed-by=/usr/share/keyrings/helm.gpg]
+      https://baltocdn.com/helm/stable/debian/ all main
+    filename: helm
+    update_cache: no
+    state: absent
+
+- name: Remove helm apt signing key from /usr/share/keyrings
+  ansible.builtin.file:
+    path: /usr/share/keyrings/helm.gpg
+    state: absent
+
+- name: Create apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+
 - name: Add helm apt repository key
   ansible.builtin.apt_key:
     id: "{{ helm_apt_key_fingerprint }}"
     url: https://baltocdn.com/helm/signing.asc
-    keyring: /usr/share/keyrings/helm.gpg
+    keyring: /etc/apt/keyrings/helm.gpg
     state: present
 
 - name: Add helm apt repository
   ansible.builtin.apt_repository:
     repo: >-
-      deb [signed-by=/usr/share/keyrings/helm.gpg]
+      deb [signed-by=/etc/apt/keyrings/helm.gpg]
       https://baltocdn.com/helm/stable/debian/ all main
     filename: helm
     update_cache: yes
