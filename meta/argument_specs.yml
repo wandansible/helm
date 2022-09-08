@@ -1,0 +1,8 @@
+---
+argument_specs:
+  main:
+    short_description: Install Helm for Kubernetes
+    options:
+      helm_apt_key_fingerprint:
+        description: The apt key fingerprint for the helm repo
+        type: str
